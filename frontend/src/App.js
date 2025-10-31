@@ -18,6 +18,7 @@ function App() {
     delete: false,
   });
   const { name, email } = formData;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const fetchUsers = async () => {
     setLoadingState((prev) => ({ ...prev, fetch: true }));
@@ -64,6 +65,11 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!emailRegex.test(formData.email)) {
+      setError("Invalid email address");
+      return;
+    }
+
     if (isEdit) {
       editUser(formData.id, formData.name, formData.email);
     } else {
