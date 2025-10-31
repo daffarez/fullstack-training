@@ -8,10 +8,12 @@ app.use(express.json());
 let users = [
   { id: 1, name: "Alice", email: "alice@mail.com" },
   { id: 2, name: "Bob", email: "bob@mail.com" },
+  { id: 3, name: "Charlie", email: "charlie@mail.com" },
+  { id: 4, name: "David", email: "david@mail.com" }
 ];
 
 // GET all users
-app.get("/api/users", (req, res) => {
+app.get("/api/users", (_, res) => {
   res.status(200).json(users);
 });
 
