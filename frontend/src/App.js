@@ -11,12 +11,16 @@ function App() {
   });
   const [error, setError] = useState("");
   const [isEdit, setIsEdit] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const { id, name, email } = formData;
+  const [loadingState, setLoadingState] = useState({
+    fetch: false,
+    add: false,
+    edit: false,
+    delete: false,
+  });
+  const { name, email } = formData;
 
   const fetchUsers = async () => {
-    setLoading(true);
+    setLoadingState((prev) => ({ ...prev, fetch: true }));
     try {
       const res = await axios.get("http://localhost:3001/api/users");
       setUsers(res.data);
@@ -26,7 +30,7 @@ function App() {
       console.error("Error fetching users:", err.message);
     } finally {
       setTimeout(() => {
-        setLoading(false);
+        setLoadingState((prev) => ({ ...prev, fetch: false }));
       }, 1000);
     }
   };
@@ -43,7 +47,7 @@ function App() {
   };
 
   const addUser = async () => {
-    setSubmitting(true);
+    setLoadingState((prev) => ({ ...prev, add: true }));
     try {
       const res = await axios.post("http://localhost:3001/api/users", formData);
       setUsers((prev) => [...prev, res.data]);
@@ -53,7 +57,7 @@ function App() {
       console.error("Error adding users:", err.message);
     } finally {
       setTimeout(() => {
-        setSubmitting(false);
+        setLoadingState((prev) => ({ ...prev, add: false }));
       }, 1000);
     }
   };
@@ -68,7 +72,7 @@ function App() {
   };
 
   const deleteUser = async (id) => {
-    setSubmitting(true);
+    setLoadingState((prev) => ({ ...prev, delete: true }));
     try {
       await axios.delete(`http://localhost:3001/api/users/${id}`);
       setUsers((prev) => prev.filter((u) => u.id !== id));
@@ -78,13 +82,13 @@ function App() {
       console.error("Error deleting user:", error.message);
     } finally {
       setTimeout(() => {
-        setSubmitting(false);
+        setLoadingState((prev) => ({ ...prev, delete: false }));
       }, 1000);
     }
   };
 
   const editUser = async (id, name, email) => {
-    setSubmitting(true);
+    setLoadingState((prev) => ({ ...prev, edit: true }));
     try {
       await axios.put(`http://localhost:3001/api/users/${id}`, {
         name,
@@ -99,7 +103,7 @@ function App() {
       console.error("Error editing user:", error.message);
     } finally {
       setTimeout(() => {
-        setSubmitting(false);
+        setLoadingState((prev) => ({ ...prev, edit: false }));
       }, 1000);
     }
   };
@@ -113,9 +117,11 @@ function App() {
     setIsEdit(true);
   };
 
+  const isLoading = Object.values(loadingState).some(Boolean);
+
   return (
     <>
-      {(loading || submitting) && <LoadingOverlay />}
+      {isLoading && <LoadingOverlay loadingState={loadingState} />}
       <div style={{ padding: "2rem" }}>
         <h1>Users List</h1>
         {error && <p style={{ color: "red" }}>{error}</p>}

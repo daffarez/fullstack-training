@@ -1,4 +1,10 @@
-export const LoadingOverlay = ({ message = "Please wait..." }) => {
+export const LoadingOverlay = ({ loadingState }) => {
+  let message = "Please wait...";
+
+  if (loadingState.fetch) message = "Fetching users...";
+  else if (loadingState.add) message = "Adding user...";
+  else if (loadingState.edit) message = "Editing user...";
+  else if (loadingState.delete) message = "Deleting user...";
   return (
     <div
       style={{
