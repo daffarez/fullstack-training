@@ -9,7 +9,7 @@ let users = [
   { id: 1, name: "Alice", email: "alice@mail.com" },
   { id: 2, name: "Bob", email: "bob@mail.com" },
   { id: 3, name: "Charlie", email: "charlie@mail.com" },
-  { id: 4, name: "David", email: "david@mail.com" }
+  { id: 4, name: "David", email: "david@mail.com" },
 ];
 
 // GET all users
@@ -22,6 +22,10 @@ app.post("/api/users", (req, res) => {
   const { name, email } = req.body;
   if (!name || !email)
     return res.status(400).json({ message: "Name and email required" });
+
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: "Invalid email format" });
+  }
 
   const newUser = { id: Date.now(), name, email };
   users.push(newUser);
@@ -47,5 +51,5 @@ app.delete("/api/users/:id", (req, res) => {
 
 const PORT = 3001;
 app.listen(PORT, () =>
-  console.log(`✅ Backend running on http://localhost:${PORT}`)
+  console.log(`Backend running on http://localhost:${PORT}`)
 );
